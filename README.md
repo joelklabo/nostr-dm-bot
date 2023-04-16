@@ -3,7 +3,7 @@
 ```javascript
 import NostrDMBot from "./nostr.js"
 
-const bot_secret = "45e237f0a302a7f5835137716341d5bd9019a86342ed7bd5d57c6e4fde98a47d"
+const bot_secret = "45e237f0a302a7f5835137716341d5bd9019a12342ed7bd5d57c6e4fde98a47d"
 const your_pubkey = "2f4fa408d85b962d1fe717daae148a4c98424ab2e10c7dd11927e101ed3257b2"
 const some_relay = 'wss://nostr.klabo.blog'
 
