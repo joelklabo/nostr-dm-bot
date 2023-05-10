@@ -1,6 +1,3 @@
-# Example usage
-
-```javascript
 import NostrDMBot from "./nostr-dm-bot.js"
 import FileLogger from "cln-file-logger"
 import path from 'path';
@@ -37,4 +34,3 @@ setTimeout(() => {
 }, 3600000); // Keep the proc
 
 await bot.connect()
-```

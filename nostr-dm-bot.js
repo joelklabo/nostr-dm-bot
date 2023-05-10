@@ -1,9 +1,10 @@
 import { EventEmitter } from 'events';
 import 'websocket-polyfill'
 import { getEventHash, getPublicKey, nip04, relayInit, signEvent } from 'nostr-tools';
+import FileLogger from 'cln-file-logger'
 
 class NostrDMBot extends EventEmitter {
-  constructor(relay_address, sender_private_key_hex, recipient_pub_key_hex) {
+  constructor(relay_address, sender_private_key_hex, recipient_pub_key_hex, logger = new FileLogger('[NostrDMBot]')) {
     super();
 
 		this.relay_address = relay_address
@@ -11,12 +12,15 @@ class NostrDMBot extends EventEmitter {
 		this.public_key = getPublicKey(this.private_key) 
 		this.recipient_pub_key_hex = recipient_pub_key_hex
 		this.relay = relayInit(this.relay_address)
+		this.logger = logger
 
 		this.relay.on('connect', () => {
+			this.logger.logInfo('Connected to relay')
 			this.emit('connect')
 		})
 
 		this.relay.on('error', (err) => {
+			this.logger.logError(err)
 			this.emit('error', err)
 		})
 
@@ -28,6 +32,8 @@ class NostrDMBot extends EventEmitter {
 		])
 
 		sub.on('event', async (event) => {
+			this.logger.logInfo('Received event')
+			this.logger.logInfo(event)
 			let recipient = event.tags.find(([k, v]) => k === 'p' && v && v !== '')[1]
 			if (this.public_key === recipient) {
 				let plaintext = await nip04.decrypt(this.private_key, this.recipient_pub_key_hex, event.content)
@@ -59,11 +65,11 @@ class NostrDMBot extends EventEmitter {
 		let pub = this.relay.publish(event)
 
 		pub.on('ok', () => {
-			//console.log('Message sent')
+			this.logger.logInfo('event published')
 		})
 
 		pub.on('failed', () => {
-			//console.log('Message failed to send')
+			this.logger.logError('event publish failed')
 		})
   }
 }
